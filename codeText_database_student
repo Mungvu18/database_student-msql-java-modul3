@@ -1,0 +1,86 @@
+create database student;
+use student;
+create table address(
+    id int auto_increment primary key,
+    address nvarchar(255)
+);
+insert into address (address) values ('hà nội');
+insert into address (address) values ('nam định');
+insert into address (address) values ('huế');
+insert into address (address) values ('TPHCM');
+insert into address (address) values ('Thái Bình');
+create table classes(
+    id int primary key auto_increment,
+    name nvarchar(255) default 'khai',
+    language nvarchar(255) default 'java',
+    description text
+);
+insert into classes (name, description) values ('g01','học full time 6 tháng');
+insert into classes (name, description) values ('g02','học full time 6 tháng');
+insert into classes (name, description) values ('g05','học full time 6 tháng');
+insert into classes (name,language, description) values ('g03','phh','học full time 5 tháng');
+insert into classes (name,language,description) values ('g04','phh','học full time 5 tháng');
+create table students(
+    id int primary key auto_increment,
+    fullname nvarchar(255) default 'vũ đan linh',
+    address_id int,
+    phone nvarchar(12) unique,
+    class_id int
+);
+alter table students add foreign key (address_id) references address(id);
+alter table students add foreign key (class_id) references classes(id);
+insert into students(fullname, address_id, phone, class_id) values ('Vũ văn mừng',1,0949288546,1);
+insert into students(fullname, address_id, phone, class_id) values ('Vũ Đức',1,0949288542,2);
+insert into students(fullname, address_id, phone, class_id) values ('Vũ Kiều Anh',1,0949288541,1);
+insert into students(address_id, phone, class_id) values (2,0949288541,1);
+insert into students(fullname, address_id, phone, class_id) values ('Lê Đức Kim',2,0948235235,3);
+insert into students(fullname, address_id, phone, class_id) values ('Lê Hoàn',5,0948235237,4);
+insert into students(fullname, address_id, phone, class_id) values ('Bùi Toàn',4,0948546235,2);
+insert into students(fullname, address_id, phone, class_id) values ('Kim Phụng Bảo Đao',3,0948789345,5);
+insert into students(fullname, address_id, phone, class_id) values ('Mai Trúc Kiếm',1,0946235275,3);
+insert into students(fullname, address_id, phone, class_id) values ('Tiêu Phong',2,0949236735,3);
+create table course(
+    id int primary key auto_increment,
+    name nvarchar(255),
+    description text
+);
+insert into course (name, description) VALUES ('Lập trình viên java','học xong cam kêt sẽ thất nghiệp');
+insert into course (name, description) VALUES ('Lập trình viên java-T10','học xong cam kêt sẽ thất nghiệp');
+insert into course (name, description) VALUES ('Lập trình viên php2','học xong cam kêt sẽ thất nghiệp');
+insert into course (name, description) VALUES ('Lập trình viên php1','học xong cam kêt sẽ thất nghiệp');
+insert into course (name, description) VALUES ('Lập trình viên java-T11','học xong cam kêt sẽ thất nghiệp');
+create table point(
+    id int auto_increment primary key ,
+    course_id int,
+    student_id int,
+    point int,
+    foreign key (course_id) references course(id),
+    foreign key (student_id) references students(id)
+);
+insert into point (course_id, student_id, point) values (1,1,8);
+insert into point (course_id, student_id, point) values (2,2,5);
+insert into point (course_id, student_id, point) values (4,3,7);
+insert into point (course_id, student_id, point) values (5,11,9);
+insert into point (course_id, student_id, point) values (1,2,8);
+insert into point (course_id, student_id, point) values (3,6,4);
+insert into point (course_id, student_id, point) values (1,7,7);
+insert into point (course_id, student_id, point) values (3,8,10);
+insert into point (course_id, student_id, point) values (5,9,9);
+insert into point (course_id, student_id, point) values (2,10,8);
+insert into point (course_id, student_id, point) values (1,2,8);
+insert into point (course_id, student_id, point) values (3,11,7);
+insert into point (course_id, student_id, point) values (2,1,6);
+insert into point (course_id, student_id, point) values (4,1,8);
+insert into point (course_id, student_id, point) values (5,6,8);
+-- thống kê sô lượng học viên của các lớp
+select classes.name, count(class_id) as so_luong_hv_theo_lớp from students join classes on students.class_id = classes.id group by class_id;
+-- thống kê số lượng học viên học tại các tỉnh
+select address.address, count(class_id) as so_luong_học_tại_tỉnh from students join address on students.class_id = address.id group by address_id;
+-- tính điểm trung bình của cả khóa học
+select c.name ,avg(point) as avg_couse from point join course c on c.id = point.course_id group by course_id;
+-- đưa ra khóa học có điểm trung bình cao nhất
+create table maxtable (select c.name , avg(point) as avg_couse from point join course c on c.id = point.course_id group by course_id);
+select maxtable.name, max(avg_couse) as diem_trung_binh_max from maxtable;
+
+
+
